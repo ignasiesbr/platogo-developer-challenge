@@ -20,7 +20,11 @@
             ticket = Ticket.find_by(barcode: params[:barcode])
             price = calculatePrice(ticket)
             ticket.price = price
-            render json: ticket
+            if ticket.save
+                render json: ticket, status: :ok
+            else
+                render json: {status: ERROR, message: 'Ticket not saved'}, status: :unprocessable_entity
+            end
         end
 
         private
