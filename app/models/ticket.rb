@@ -5,7 +5,10 @@ class Ticket < ApplicationRecord
 
     private
     def default_values
-        self.barcode = SecureRandom.hex(8)
+        if new_record?
+            self.barcode = SecureRandom.hex(8)
+            self.price = 2
+        end
     end
 
 end

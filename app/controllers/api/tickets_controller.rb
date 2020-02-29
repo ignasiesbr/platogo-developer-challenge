@@ -15,5 +15,20 @@
                 render json: {status: ERROR, message: 'Ticket not saved'}, status: :unprocessable_entity
             end
         end
+
+        def show
+            ticket = Ticket.find_by(barcode: params[:barcode])
+            price = calculatePrice(ticket)
+            ticket.price = price
+            render json: ticket
+        end
+
+        private
+        def calculatePrice(ticket)
+            now = Time.zone.now
+            current_hour = ticket.created_at
+            hours = ((now - current_hour) / 3600).ceil
+            hours * 2
+        end
      end
  end
