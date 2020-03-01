@@ -8,6 +8,7 @@ class Ticket < ApplicationRecord
         if new_record?
             self.barcode = SecureRandom.hex(8)
             self.price = 2
+            self.is_paid = false
         end
     end
 
