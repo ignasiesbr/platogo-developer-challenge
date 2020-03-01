@@ -21,8 +21,10 @@
             if not ticket 
                 return errorJson("Ticket not found")
             end
-            price = calculatePrice(ticket)
-            ticket.price = price
+            if not ticket.is_paid
+                price = calculatePrice(ticket)
+                ticket.price = price
+            end
             if ticket.save
                 render json: ticket, status: :ok
             else
@@ -52,6 +54,23 @@
             end
         end
 
+        def state
+            ticket = Ticket.find_by(barcode:params[:barcode])
+            if not ticket 
+                return errorJson("Ticket not found") 
+            end
+            if not isPaymentValid(ticket)
+                ticket.is_paid = false
+                ticket.price = 2
+                ticket.payment_time = nil
+                ticket.save
+                return render json: {barcode: ticket.barcode, is_paid: ticket.is_paid}
+            else
+                return render json: {barcode: ticket.barcode, is_paid: ticket.is_paid}
+            end
+
+        end
+
         private
         def calculatePrice(ticket)
             now = Time.zone.now
@@ -72,5 +91,8 @@
             render json: {status: "ERROR", message: message}, status: :unprocessable_entity
         end
 
+        def isPaymentValid(ticket)
+            ticket.is_paid and ((Time.zone.now - ticket.payment_time) < (15 * 60)) ? true : false
+        end
      end
  end
