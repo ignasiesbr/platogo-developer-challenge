@@ -5,5 +5,6 @@ Rails.application.routes.draw do
     get '/tickets/:barcode', to: 'tickets#show'
     post '/tickets/:barcode/payments', to: 'tickets#pay'
     get '/tickets/:barcode/state', to: 'tickets#state'
+    get '/free-spaces', to:'tickets#free_spaces'
   end
 end
